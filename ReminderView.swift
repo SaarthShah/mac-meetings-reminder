@@ -3,13 +3,14 @@ import EventKit
 
 struct ReminderView: View {
     let event: EKEvent
-    @State private var window: NSWindow?
+    let windowID: UUID
     @State private var countdown: Int
     @State private var timer: Timer?
     @ObservedObject private var settings = SettingsManager.shared
     
-    init(event: EKEvent) {
+    init(event: EKEvent, windowID: UUID = UUID()) {
         self.event = event
+        self.windowID = windowID
         self._countdown = State(initialValue: SettingsManager.shared.autoDismissSeconds)
     }
     
@@ -72,7 +73,7 @@ struct ReminderView: View {
                             Text("Snooze \(settings.snoozeMinutes) min")
                         }
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(colors.buttonText)
+                        .foregroundColor(colors.text)
                         .frame(width: 220, height: 60)
                         .background(colors.buttonBackground)
                         .cornerRadius(10)
@@ -80,7 +81,7 @@ struct ReminderView: View {
                     .buttonStyle(PlainButtonStyle())
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(colors.primary, lineWidth: 2)
+                            .stroke(colors.secondaryText.opacity(0.3), lineWidth: 1.5)
                     )
                     
                     Button(action: {
@@ -91,16 +92,12 @@ struct ReminderView: View {
                             Text("I'm Going")
                         }
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(colors.text)
+                        .foregroundColor(colors.background)
                         .frame(width: 220, height: 60)
-                        .background(colors.background.opacity(0.3))
+                        .background(colors.text)
                         .cornerRadius(10)
                     }
                     .buttonStyle(PlainButtonStyle())
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(colors.primary, lineWidth: 3)
-                    )
                 }
                 .padding(.bottom, 60)
                 
@@ -112,7 +109,6 @@ struct ReminderView: View {
             }
         }
         .onAppear {
-            findWindow()
             startCountdown()
         }
         .onDisappear {
@@ -126,11 +122,15 @@ struct ReminderView: View {
         return "\(formatter.string(from: start)) - \(formatter.string(from: end))"
     }
     
-    private func findWindow() {
-        DispatchQueue.main.async {
-            if let window = NSApp.windows.first(where: { $0.contentViewController is NSHostingController<ReminderView> }) {
-                self.window = window
+    private func findAndCloseWindow() {
+        // Find the window with our unique identifier
+        if let window = NSApp.windows.first(where: { window in
+            if let controller = window.contentViewController as? NSHostingController<ReminderView> {
+                return controller.rootView.windowID == self.windowID
             }
+            return false
+        }) {
+            window.close()
         }
     }
     
@@ -146,12 +146,13 @@ struct ReminderView: View {
     
     private func snooze() {
         timer?.invalidate()
-        window?.close()
+        findAndCloseWindow()
         
         // Schedule another reminder based on settings
         let snoozeSeconds = TimeInterval(settings.snoozeMinutes * 60)
         DispatchQueue.main.asyncAfter(deadline: .now() + snoozeSeconds) {
-            let reminderView = ReminderView(event: event)
+            let newWindowID = UUID()
+            let reminderView = ReminderView(event: event, windowID: newWindowID)
             let hostingController = NSHostingController(rootView: reminderView)
             
             let newWindow = NSWindow(contentViewController: hostingController)
@@ -172,7 +173,7 @@ struct ReminderView: View {
     
     private func dismiss() {
         timer?.invalidate()
-        window?.close()
+        findAndCloseWindow()
     }
 }
 

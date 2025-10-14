@@ -10,7 +10,7 @@ Meeting Reminder is a native macOS app that blocks your screen when it's time to
 - 📅 **Calendar Integration**: Automatically syncs with your Mac's Calendar app
 - ⏰ **Perfect Timing**: Shows reminders right when meetings start
 - 🔔 **Snooze Function**: Need more time? Customizable snooze duration
-- 🎨 **Light & Dark Themes**: Choose between light, dark, or auto (system) theme
+- 🎨 **Light & Dark Themes**: Choose between light, dark, or system theme
 - ⚙️ **Customizable Settings**: Dropdown panel from menu bar icon
 - 🚫 **No Distractions**: Lives in your menu bar, stays out of your way
 
@@ -76,7 +76,7 @@ swift build -c release
 
 Click the menu bar icon to access settings:
 
-- **Theme**: Choose Light, Dark, or Auto (follows system)
+- **Theme**: Choose Light, Dark, or System
 - **Check Interval**: How often to check calendar (15-120 seconds)
 - **Reminder Time**: When to show reminder (0-5 minutes before meeting)
 - **Auto Dismiss**: How long before auto-closing (5-60 seconds)
@@ -96,7 +96,7 @@ Right-click the menu bar icon for quick access to About and Quit options.
 All customization is now available through the Settings panel! Just click the menu bar icon to adjust:
 
 - Check interval, reminder timing, auto-dismiss duration, snooze duration
-- Theme selection (Light/Dark/Auto)
+- Theme selection (Light/Dark/System)
 
 Advanced users can still modify `SettingsManager.swift` to change default values or add new settings.
 

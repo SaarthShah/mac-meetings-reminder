@@ -14,8 +14,6 @@
 	<string>1.0</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>13.0</string>
-	<key>LSUIElement</key>
-	<true/>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Meeting Reminder needs access to your calendar to show you meeting reminders at the right time.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>

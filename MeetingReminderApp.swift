@@ -1,4 +1,5 @@
 import SwiftUI
+import ServiceManagement
 
 @main
 struct MeetingReminderApp: App {
@@ -6,88 +7,98 @@ struct MeetingReminderApp: App {
     @StateObject private var meetingMonitor = MeetingMonitor()
     
     var body: some Scene {
-        Settings {
-            EmptyView()
+        WindowGroup {
+            SettingsView()
+                .frame(minWidth: 420, minHeight: 600)
+        }
+        .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
+        .commands {
+            CommandGroup(replacing: .appInfo) {
+                Button("About Meeting Reminder") {
+                    appDelegate.showAbout()
+                }
+            }
         }
     }
 }
 
 class AppDelegate: NSObject, NSApplicationDelegate {
-    var statusItem: NSStatusItem?
     var meetingMonitor: MeetingMonitor?
-    var settingsPopover: NSPopover?
+    var statusItem: NSStatusItem?
     
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Hide from Dock
-        NSApp.setActivationPolicy(.accessory)
+        // Show in Dock as a regular app
+        NSApp.setActivationPolicy(.regular)
         
         // Create menu bar icon
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
         if let button = statusItem?.button {
             button.image = NSImage(systemSymbolName: "calendar.badge.clock", accessibilityDescription: "Meeting Reminder")
-            button.action = #selector(statusBarButtonClicked)
-            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
+        
+        updateMenu()
         
         // Initialize meeting monitor
         meetingMonitor = MeetingMonitor()
         meetingMonitor?.requestCalendarAccess()
-    }
-    
-    @objc func statusBarButtonClicked(_ sender: NSStatusBarButton) {
-        guard let event = NSApp.currentEvent else { return }
         
-        if event.type == .rightMouseUp {
-            showContextMenu()
-        } else {
-            toggleSettingsPopover(sender)
-        }
+        // Listen for launch at login changes
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateMenu),
+            name: NSNotification.Name("LaunchAtLoginChanged"),
+            object: nil
+        )
     }
     
-    func showContextMenu() {
+    @objc func updateMenu() {
         let menu = NSMenu()
-        menu.addItem(NSMenuItem(title: "Settings", action: #selector(showSettings), keyEquivalent: ","))
-        menu.addItem(NSMenuItem(title: "About Meeting Reminder", action: #selector(showAbout), keyEquivalent: ""))
+        
+        // Launch at Login toggle
+        let launchAtLoginItem = NSMenuItem(
+            title: "Launch at Login",
+            action: #selector(toggleLaunchAtLogin),
+            keyEquivalent: ""
+        )
+        launchAtLoginItem.state = isLaunchAtLoginEnabled() ? .on : .off
+        menu.addItem(launchAtLoginItem)
+        
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        
+        // Quit
+        menu.addItem(NSMenuItem(
+            title: "Quit Meeting Reminder",
+            action: #selector(NSApplication.terminate(_:)),
+            keyEquivalent: "q"
+        ))
         
         statusItem?.menu = menu
-        statusItem?.button?.performClick(nil)
-        statusItem?.menu = nil
     }
     
-    @objc func toggleSettingsPopover(_ sender: NSStatusBarButton) {
-        if let popover = settingsPopover, popover.isShown {
-            popover.close()
-            return
+    @objc func toggleLaunchAtLogin() {
+        if #available(macOS 13.0, *) {
+            if isLaunchAtLoginEnabled() {
+                try? SMAppService.mainApp.unregister()
+            } else {
+                try? SMAppService.mainApp.register()
+            }
         }
-        
-        showSettings()
+        updateMenu()
     }
     
-    @objc func showSettings() {
-        guard let button = statusItem?.button else { return }
-        
-        if settingsPopover == nil {
-            settingsPopover = NSPopover()
-            settingsPopover?.behavior = .transient
-            settingsPopover?.animates = true
+    func isLaunchAtLoginEnabled() -> Bool {
+        if #available(macOS 13.0, *) {
+            return SMAppService.mainApp.status == .enabled
         }
-        
-        let settingsView = SettingsView(onClose: { [weak self] in
-            self?.settingsPopover?.close()
-        })
-        let hostingController = NSHostingController(rootView: settingsView)
-        
-        settingsPopover?.contentViewController = hostingController
-        settingsPopover?.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+        return false
     }
     
-    @objc func showAbout() {
+    func showAbout() {
         let alert = NSAlert()
         alert.messageText = "Meeting Reminder"
-        alert.informativeText = "Never Miss Critical Meetings\n\nBlocks your screen when it's time to go to the meeting."
+        alert.informativeText = "Never Miss Critical Meetings\n\nVersion 1.0\nBuilt by Saarth Shah\n\nBlocks your screen when it's time to go to the meeting."
         alert.alertStyle = .informational
         alert.runModal()
     }

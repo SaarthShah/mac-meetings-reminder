@@ -4,7 +4,7 @@ import SwiftUI
 enum AppTheme: String, CaseIterable {
     case light = "Light"
     case dark = "Dark"
-    case auto = "Auto (System)"
+    case auto = "System"
     
     var displayName: String {
         return self.rawValue
@@ -75,21 +75,21 @@ class SettingsManager: ObservableObject {
         
         if isDark {
             return ThemeColors(
-                background: Color(red: 0.15, green: 0.15, blue: 0.18),
-                primary: Color(red: 1.0, green: 0.6, blue: 0.2),
+                background: Color.black,
+                primary: Color.white,
                 text: Color.white,
-                secondaryText: Color.white.opacity(0.8),
-                buttonBackground: Color(red: 0.25, green: 0.25, blue: 0.28),
+                secondaryText: Color.white.opacity(0.7),
+                buttonBackground: Color(white: 0.15),
                 buttonText: Color.white
             )
         } else {
             return ThemeColors(
-                background: Color(red: 1.0, green: 0.6, blue: 0.2),
-                primary: Color.white,
-                text: Color.white,
-                secondaryText: Color.white.opacity(0.9),
-                buttonBackground: Color.white,
-                buttonText: Color.orange
+                background: Color.white,
+                primary: Color.black,
+                text: Color.black,
+                secondaryText: Color.black.opacity(0.6),
+                buttonBackground: Color(white: 0.95),
+                buttonText: Color.black
             )
         }
     }

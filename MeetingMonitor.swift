@@ -77,7 +77,8 @@ class MeetingMonitor: ObservableObject {
     
     @MainActor
     private func showReminderWindow(for event: EKEvent) {
-        let reminderView = ReminderView(event: event)
+        let windowID = UUID()
+        let reminderView = ReminderView(event: event, windowID: windowID)
         let hostingController = NSHostingController(rootView: reminderView)
         
         let window = NSWindow(contentViewController: hostingController)
