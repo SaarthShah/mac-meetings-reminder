@@ -56,6 +56,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func updateMenu() {
         let menu = NSMenu()
         
+        // Open Settings
+        menu.addItem(NSMenuItem(
+            title: "Open Settings",
+            action: #selector(openSettings),
+            keyEquivalent: ","
+        ))
+        
+        menu.addItem(NSMenuItem.separator())
+        
         // Launch at Login toggle
         let launchAtLoginItem = NSMenuItem(
             title: "Launch at Login",
@@ -75,6 +84,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         ))
         
         statusItem?.menu = menu
+    }
+    
+    @objc func openSettings() {
+        NSApp.activate(ignoringOtherApps: true)
+        
+        // Bring the main window to front
+        if let window = NSApp.windows.first(where: { $0.isVisible && !$0.isSheet }) {
+            window.makeKeyAndOrderFront(nil)
+        }
     }
     
     @objc func toggleLaunchAtLogin() {
