@@ -17,35 +17,29 @@ struct SettingsView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // App Title
-            VStack(spacing: 8) {
-                // App Logo from SwiftPM resources
-                Image("AppLogo", bundle: .module)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 56, height: 56)
-                    .shadow(color: .black.opacity(0.5), radius: 8, x: 0, y: 6)
-                
-                Text("Dart")
-                    .font(.system(size: 22, weight: .bold))
-                    .foregroundColor(.primary)
-                
-                Text("Never miss an important meeting")
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
-            }
-            .padding(12)
-            .frame(maxWidth: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(cardBackground)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .stroke(cardStroke, lineWidth: 1)
-                    )
-            )
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
+			// Header: logo on the left, name and tagline on the right
+			HStack(alignment: .center, spacing: 12) {
+				Image("AppLogo", bundle: .module)
+					.resizable()
+					.aspectRatio(contentMode: .fit)
+					.frame(width: 44, height: 44)
+					.shadow(color: .black.opacity(0.4), radius: 6, x: 0, y: 4)
+				
+				VStack(alignment: .leading, spacing: 2) {
+					Text("Dart")
+						.font(.system(size: 22, weight: .bold))
+						.foregroundColor(.primary)
+					
+					Text("Never miss an important meeting")
+						.font(.system(size: 11))
+						.foregroundColor(.secondary)
+				}
+				
+				Spacer()
+			}
+			.padding(.horizontal, 16)
+			.padding(.top, 12)
+			.padding(.bottom, 8)
             
             Divider()
             
@@ -120,17 +114,9 @@ struct SettingsView: View {
                                 .labelsHidden()
                         }
                     }
-                    .padding(12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .fill(cardBackground)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                    .stroke(cardStroke, lineWidth: 1)
-                            )
-                    )
+					.padding(.vertical, 8)
                     .padding(.horizontal, 16)
-                    .padding(.top, 16)
+					.padding(.top, 8)
 
                     Spacer().frame(height: 20)
                 }
@@ -197,7 +183,7 @@ struct SettingsRow<Content: View>: View {
                 content
             }
         }
-        .padding(.horizontal, 24)
+		.padding(.horizontal, 16)
         .padding(.vertical, 10)
         .background(isHovering ? Color.white.opacity(0.04) : Color.clear)
         .onHover { hovering in
