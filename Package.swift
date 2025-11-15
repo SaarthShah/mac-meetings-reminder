@@ -17,6 +17,10 @@ let package = Package(
                 "ReminderView.swift",
                 "SettingsManager.swift",
                 "SettingsView.swift"
+            ],
+            resources: [
+                .process("Assets.xcassets"),
+                .copy("DartIcon.icns")
             ]
         )
     ]

@@ -4,35 +4,56 @@ struct SettingsView: View {
     @ObservedObject var settings = SettingsManager.shared
     var onClose: (() -> Void)?
     
+    // Styling
+    private var cardBackground: Color { Color.white.opacity(0.05) }
+    private var cardStroke: Color { Color.white.opacity(0.12) }
+    private var windowBackground: LinearGradient {
+        LinearGradient(
+            colors: [Color.black, Color.black.opacity(0.96)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             // App Title
             VStack(spacing: 8) {
-                Image(systemName: "calendar.badge.clock")
-                    .font(.system(size: 32))
-                    .foregroundColor(.primary)
+                // App Logo from SwiftPM resources
+                Image("AppLogo", bundle: .module)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 56, height: 56)
+                    .shadow(color: .black.opacity(0.5), radius: 8, x: 0, y: 6)
                 
-                Text("Meeting Reminder")
-                    .font(.system(size: 20, weight: .semibold))
+                Text("Dart")
+                    .font(.system(size: 22, weight: .bold))
                     .foregroundColor(.primary)
                 
                 Text("Never miss an important meeting")
-                    .font(.system(size: 12))
+                    .font(.system(size: 11))
                     .foregroundColor(.secondary)
             }
+            .padding(12)
             .frame(maxWidth: .infinity)
-            .padding(.top, 32)
-            .padding(.bottom, 24)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(cardBackground)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .stroke(cardStroke, lineWidth: 1)
+                    )
+            )
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
             
             Divider()
             
             // Settings Content
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    // Appearance Section
                     VStack(alignment: .leading, spacing: 0) {
-                        SectionHeader(title: "Appearance")
-                        
+                        // Theme
                         SettingsRow(
                             icon: "paintbrush.fill",
                             title: "Theme",
@@ -44,17 +65,13 @@ struct SettingsView: View {
                                 }
                             }
                             .pickerStyle(.menu)
-                            .frame(width: 100)
+                            .frame(width: 120)
                         }
-                    }
-                    
-                    Divider()
-                        .padding(.leading, 52)
-                    
-                    // Timing Section
-                    VStack(alignment: .leading, spacing: 0) {
-                        SectionHeader(title: "Timing")
-                        
+                        Divider()
+                            .foregroundColor(.clear)
+                            .overlay(Color.white.opacity(0.08))
+                            .padding(.leading, 52)
+                        // Check Interval
                         SettingsRow(
                             icon: "arrow.clockwise",
                             title: "Check Interval",
@@ -63,7 +80,11 @@ struct SettingsView: View {
                             Stepper("", value: $settings.checkInterval, in: 15...120, step: 15)
                                 .labelsHidden()
                         }
-                        
+                        Divider()
+                            .foregroundColor(.clear)
+                            .overlay(Color.white.opacity(0.08))
+                            .padding(.leading, 52)
+                        // Reminder lead time
                         SettingsRow(
                             icon: "bell.fill",
                             title: "Show Reminder",
@@ -72,7 +93,11 @@ struct SettingsView: View {
                             Stepper("", value: $settings.reminderMinutesBefore, in: 0...5)
                                 .labelsHidden()
                         }
-                        
+                        Divider()
+                            .foregroundColor(.clear)
+                            .overlay(Color.white.opacity(0.08))
+                            .padding(.leading, 52)
+                        // Auto dismiss
                         SettingsRow(
                             icon: "timer",
                             title: "Auto Dismiss",
@@ -81,7 +106,11 @@ struct SettingsView: View {
                             Stepper("", value: $settings.autoDismissSeconds, in: 5...60, step: 5)
                                 .labelsHidden()
                         }
-                        
+                        Divider()
+                            .foregroundColor(.clear)
+                            .overlay(Color.white.opacity(0.08))
+                            .padding(.leading, 52)
+                        // Snooze
                         SettingsRow(
                             icon: "moon.zzz.fill",
                             title: "Snooze Duration",
@@ -91,9 +120,19 @@ struct SettingsView: View {
                                 .labelsHidden()
                         }
                     }
-                    
-                    Spacer()
-                        .frame(height: 20)
+                    .padding(12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(cardBackground)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .stroke(cardStroke, lineWidth: 1)
+                            )
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+
+                    Spacer().frame(height: 20)
                 }
             }
             
@@ -108,24 +147,11 @@ struct SettingsView: View {
             }
         }
         .frame(width: 420, height: 600)
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(windowBackground)
     }
 }
 
-struct SectionHeader: View {
-    let title: String
-    
-    var body: some View {
-        Text(title)
-            .font(.system(size: 11, weight: .semibold))
-            .foregroundColor(.secondary)
-            .textCase(.uppercase)
-            .kerning(0.5)
-            .padding(.horizontal, 24)
-            .padding(.top, 18)
-            .padding(.bottom, 10)
-    }
-}
+// (SectionHeader removed to keep layout minimal)
 
 struct SettingsRow<Content: View>: View {
     let icon: String
@@ -173,7 +199,7 @@ struct SettingsRow<Content: View>: View {
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 10)
-        .background(isHovering ? Color.secondary.opacity(0.05) : Color.clear)
+        .background(isHovering ? Color.white.opacity(0.04) : Color.clear)
         .onHover { hovering in
             isHovering = hovering
         }

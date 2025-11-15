@@ -1,5 +1,6 @@
 import SwiftUI
 import ServiceManagement
+import AppKit
 
 @main
 struct MeetingReminderApp: App {
@@ -15,7 +16,7 @@ struct MeetingReminderApp: App {
         .windowResizability(.contentSize)
         .commands {
             CommandGroup(replacing: .appInfo) {
-                Button("About Meeting Reminder") {
+                Button("About Dart") {
                     appDelegate.showAbout()
                 }
             }
@@ -30,12 +31,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Show in Dock as a regular app
         NSApp.setActivationPolicy(.regular)
+
+        // Set Dock icon from packaged resources (black background logo)
+        if let iconURL = Bundle.module.url(forResource: "DartIcon", withExtension: "icns"),
+           let iconImage = NSImage(contentsOf: iconURL) {
+            // Apply rounded corners only for Dock icon
+            let radius = min(iconImage.size.width, iconImage.size.height) * 0.18
+            let rounded = makeRoundedImage(from: iconImage, cornerRadius: radius)
+            NSApplication.shared.applicationIconImage = rounded
+        }
         
         // Create menu bar icon
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
         if let button = statusItem?.button {
-            button.image = NSImage(systemSymbolName: "calendar.badge.clock", accessibilityDescription: "Meeting Reminder")
+            // Load spiral logo from SwiftPM bundle; fall back to 16x16 icon
+            let statusImage = Bundle.module.image(forResource: "AppLogo") ??
+                               Bundle.module.image(forResource: "icon_16x16")
+            if let statusImage = statusImage {
+                statusImage.size = NSSize(width: 18, height: 18)
+                statusImage.isTemplate = true // allow automatic tinting in menu bar
+                button.image = statusImage
+            }
         }
         
         updateMenu()
@@ -51,6 +68,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             name: NSNotification.Name("LaunchAtLoginChanged"),
             object: nil
         )
+    }
+    
+    // Produce an NSImage with rounded corners
+    private func makeRoundedImage(from image: NSImage, cornerRadius: CGFloat) -> NSImage {
+        let targetSize = image.size
+        let newImage = NSImage(size: targetSize)
+        newImage.lockFocus()
+        let rect = NSRect(origin: .zero, size: targetSize)
+        NSGraphicsContext.current?.imageInterpolation = .high
+        let path = NSBezierPath(roundedRect: rect, xRadius: cornerRadius, yRadius: cornerRadius)
+        path.addClip()
+        image.draw(in: rect)
+        newImage.unlockFocus()
+        return newImage
     }
     
     @objc func updateMenu() {
@@ -78,7 +109,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Quit
         menu.addItem(NSMenuItem(
-            title: "Quit Meeting Reminder",
+            title: "Quit Dart",
             action: #selector(NSApplication.terminate(_:)),
             keyEquivalent: "q"
         ))
@@ -115,7 +146,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func showAbout() {
         let alert = NSAlert()
-        alert.messageText = "Meeting Reminder"
+        alert.messageText = "Dart"
         alert.informativeText = "Never Miss Critical Meetings\n\nVersion 1.0\nBuilt by Saarth Shah\n\nBlocks your screen when it's time to go to the meeting."
         alert.alertStyle = .informational
         alert.runModal()

@@ -3,21 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>Meeting Reminder</string>
+	<string>Dart</string>
 	<key>CFBundleDisplayName</key>
-	<string>Meeting Reminder</string>
+	<string>Dart</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.meetingreminder.app</string>
+	<string>com.saarthshah.dart</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
+	<key>CFBundleIconFile</key>
+	<string>DartIcon</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>13.0</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Meeting Reminder needs access to your calendar to show you meeting reminders at the right time.</string>
+	<string>Dart needs access to your calendar to show you meeting reminders at the right time.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>Meeting Reminder needs full access to your calendar to monitor upcoming meetings and show you timely reminders.</string>
+	<string>Dart needs full access to your calendar to monitor upcoming meetings and show you timely reminders.</string>
 </dict>
 </plist>
 

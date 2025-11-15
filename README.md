@@ -1,8 +1,8 @@
-# Meeting Reminder - Never Miss Critical Meetings
+# Dart - Never Miss Critical Meetings
 
 **Never Miss Critical Meetings**
 
-Meeting Reminder is a native macOS app that blocks your screen when it's time to go to your meeting. No more missing meetings because you got distracted!
+Dart is a native macOS app that blocks your screen when it's time to go to your meeting. No more missing meetings because you got distracted!
 
 ## Features
 
@@ -27,7 +27,7 @@ Meeting Reminder is a native macOS app that blocks your screen when it's time to
    - Open Xcode
    - File > New > Project
    - Choose "App" under macOS
-   - Name it "MeetingReminder"
+   - Name it "Dart"
    - Interface: SwiftUI
    - Language: Swift
 
@@ -104,7 +104,7 @@ Advanced users can still modify `SettingsManager.swift` to change default values
 
 **Calendar access denied?**
 - Go to System Settings > Privacy & Security > Calendars
-- Enable access for "Meeting Reminder"
+- Enable access for "Dart"
 
 **Not showing reminders?**
 - Check that you have events in your calendar
