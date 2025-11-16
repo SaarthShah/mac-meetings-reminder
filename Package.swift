@@ -2,12 +2,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "MeetingReminder",
+    name: "Dart",
     platforms: [.macOS(.v13)],
     dependencies: [],
     targets: [
         .executableTarget(
-            name: "MeetingReminder",
+            name: "Dart",
             dependencies: [],
             path: ".",
             sources: [
